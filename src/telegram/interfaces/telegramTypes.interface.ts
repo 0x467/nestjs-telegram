@@ -1,3 +1,6 @@
+import { BadRequestException } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
 /**
  * This object represents a Telegram user or bot.
  */
@@ -641,7 +644,7 @@ export interface TelegramPoll {
 /**
  * This object represent a user's profile pictures.
  */
-export interface TelegramUserProfilePhots {
+export interface TelegramUserProfilePhotos {
   /**
    * Total number of profile pictures the target user has
    */
@@ -1702,4 +1705,42 @@ export interface TelegramGameHighScore {
    * What the score was
    */
   score: number;
+}
+
+/********************************************
+ *
+ * T E L E G R A M   R E T U R N   T Y P E S
+ *
+ ********************************************/
+
+/**
+ * Response object sent from Telegram. If "ok" is true, the API callout was successful,
+ * otherwise the error_code, and description will have information about what happened
+ */
+export interface TelegramResponse<T> {
+  ok: boolean;
+  result?: T;
+  error_code?: number;
+  description?: string;
+}
+
+export type TelegramServiceResponse<T> = Observable<T> | Promise<T>;
+
+/********************************************
+ *
+ * T E L E G R A M   A P I   O P T I O N S
+ *
+ ********************************************/
+
+/**
+ * Options to pass to the API on whether to return a Promise of an Observable
+ */
+export interface TelegramAPIOptions {
+  promise: boolean;
+}
+
+export class TelegramException extends BadRequestException {
+  constructor(message?: string | object | any, error?: string) {
+    super(message, error);
+  }
 }
