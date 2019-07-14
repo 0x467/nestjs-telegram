@@ -1,10 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
-import { Observable } from 'rxjs';
 
 /**
  * This object represents a Telegram user or bot.
  */
-export interface User {
+export interface TelegramUser {
   /**
    * Unique identifier for this bot to use
    */
@@ -34,7 +33,7 @@ export interface User {
 /**
  * This object represents a Telegram chat.
  */
-export interface Chat {
+export interface TelegramChat {
   /**
    * Unique identifier for this chat.
    * This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it.
@@ -68,7 +67,7 @@ export interface Chat {
   /**
    * _Optional._ Chat photo. Returned only in [getChat](https://core.telegram.org/bots/api#getchat)
    */
-  photo?: ChatPhoto;
+  photo?: TelegramChatPhoto;
   /**
    * _Optional._ Description, for supergroups and channel chats.
    * Returned only in [getChat](https://core.telegram.org/bots/api#getchat)
@@ -85,7 +84,7 @@ export interface Chat {
    * _Optional._ Pinned message, for groups, supergroups and channels.
    * Returned only in [getChat](https://core.telegram.org/bots/api#getchat).
    */
-  pinned_message?: Message;
+  pinned_message?: TelegramMessage;
   /**
    * _Optional._ For supergroups, name of group sticker set. Returned only in [getChat](https://core.telegram.org/bots/api#getchat).
    */
@@ -96,7 +95,7 @@ export interface Chat {
   can_set_sticker_set?: boolean;
 }
 
-export interface Message {
+export interface TelegramMessage {
   /**
    * Unique message identifier inside this chat
    */
@@ -104,7 +103,7 @@ export interface Message {
   /**
    * _Optional._ Sender, empty for messages sent to channels
    */
-  from?: User;
+  from?: TelegramUser;
   /**
    * Date the message was sent in Unix time
    */
@@ -112,15 +111,15 @@ export interface Message {
   /**
    * Conversation the message belongs to
    */
-  chat: Chat;
+  chat: TelegramChat;
   /**
    * _Optional._ For forwarded messages, sender of the original message
    */
-  forward_from?: User;
+  forward_from?: TelegramUser;
   /**
    * _Optional._ For messages forwarded from channels, information about the original channel
    */
-  forward_from_chat?: Chat;
+  forward_from_chat?: TelegramChat;
   /**
    * _Optional._ For messages forwarded from channels, identifier of the original message in the channel
    */
@@ -141,7 +140,7 @@ export interface Message {
    * _Optional._ For replies, the original message. Note that the
    * Message object in this field will not contain further reply_to_message fields even if it itself is a reply.
    */
-  reply_to_message?: Message;
+  reply_to_message?: TelegramMessage;
   /**
    * _Optional._ Date the message was last edited in Unix time
    */
@@ -161,48 +160,48 @@ export interface Message {
   /**
    * _Optional._ For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
    */
-  entities?: MessageEntity[];
+  entities?: TelegramMessageEntity[];
   /**
    * _Optional._ For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in the caption
    */
-  caption_entities?: MessageEntity[];
+  caption_entities?: TelegramMessageEntity[];
   /**
    * _Optional._ Message is an audio file, information about the file
    */
-  audio?: Audio;
+  audio?: TelegramAudio;
   /**
    * _Optional._ Message is a general file, information about the file
    */
-  document?: Document;
+  document?: TelegramDocument;
   /**
    * _Optional._ Message is an animation, information about the animation.
    * For backward compatibility, when this field is set, the document field will also be set
    */
-  animation?: Animation;
+  animation?: TelegramAnimation;
   /**
    * _Optional._ Message is a game, information about the game. [More about games »](https://core.telegram.org/bots/api#games)
    */
-  game?: Game;
+  game?: TelegramGame;
   /**
    * _Optional._ Message is a photo, available sizes of the photo
    */
-  photo?: PhotoSize[];
+  photo?: TelegramPhotoSize[];
   /**
    * _Optional._ Message is a sticker, information about the sticker
    */
-  sticker?: Sticker;
+  sticker?: TelegramSticker;
   /**
    * _Optional._ Message is a video, information about the video
    */
-  video?: Video;
+  video?: TelegramVideo;
   /**
    * _Optional._ Message is a voice message, information about the file
    */
-  voice?: Voice;
+  voice?: TelegramVoice;
   /**
    * _Optional._ Message is a [video note](https://telegram.org/blog/video-messages-and-telescope), information about the video message
    */
-  video_note?: VideoNote;
+  video_note?: TelegramVideoNote;
   /**
    * _Optional._ Caption for the animation, audio, document, photo, video or voice, 0-1024 characters
    */
@@ -210,28 +209,28 @@ export interface Message {
   /**
    * _Optional._ Message is a shared contact, information about the contact
    */
-  contact?: Contact;
+  contact?: TelegramContact;
   /**
    * _Optional._ Message is a shared location, information about the location
    */
-  location?: Location;
+  location?: TelegramLocation;
   /**
    * _Optional._ Message is a venue, information about the venue
    */
-  venue?: Venue;
+  venue?: TelegramVenue;
   /**
    * _Optional._ Message is a native poll, information about the pol
    */
-  poll?: Poll;
+  poll?: TelegramPoll;
   /**
    * _Optional._ New members that were added to the group
    * or supergroup and information about them (the bot itself may be one of these members)
    */
-  new_chat_members?: User[];
+  new_chat_members?: TelegramUser[];
   /**
    * _Optional._ A member was removed from the group, information about them (this member may be the bot itself)
    */
-  left_chat_member?: User;
+  left_chat_member?: TelegramUser;
   /**
    * _Optional._ A chat title was changed to this value
    */
@@ -239,7 +238,7 @@ export interface Message {
   /**
    * _Optional._ A chat photo was change to this value
    */
-  new_chat_phot?: PhotoSize[];
+  new_chat_phot?: TelegramPhotoSize[];
   /**
    * _Optional._ Service message: the chat photo was deleted
    */
@@ -276,18 +275,18 @@ export interface Message {
    * _Optional._ Specified message was pinned.
    * Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply.
    */
-  pinned_message?: Message;
+  pinned_message?: TelegramMessage;
   /**
    * _Optional._ Message is an invoice for a [payment](https://core.telegram.org/bots/api#payments),
    * information about the invoice.
    * [More about payments »](https://core.telegram.org/bots/api#payments)
    */
-  invoice?: Invoice;
+  invoice?: TelegramInvoice;
   /**
    * _Optional._ Message is a service message about a successful payment, information about the payment.
    * [More about payments »](https://core.telegram.org/bots/api#payments)
    */
-  successful_payment?: SuccessfulPayment;
+  successful_payment?: TelegramSuccessfulPayment;
   /**
    * _Optional._ The domain name of the website on which the user has logged in.
    * [More about  Login »](https://core.telegram.org/widgets/login)
@@ -296,17 +295,17 @@ export interface Message {
   /**
    * _Optional._  Passport data
    */
-  passport_data?: PassportData;
+  passport_data?: TelegramPassportData;
   /**
    * Optional. Inline keyboard attached to the message. `login_url` buttons are represented as ordinary `url` buttons.
    */
-  reply_markup?: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
 /**
  * This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
  */
-export interface MessageEntity {
+export interface TelegramMessageEntity {
   /**
    * Type of the entity.
    * Can be mention (@username), hashtag, cashtag, bot_command, url, email, phone_number, bold (bold text),
@@ -329,14 +328,14 @@ export interface MessageEntity {
   /**
    * _Optional._ For “text_mention” only, the mentioned user
    */
-  user?: User;
+  user?: TelegramUser;
 }
 
 /**
  * This object represents one size of a photo or a [file](https://core.telegram.org/bots/api#document) /
  * [sticker](https://core.telegram.org/bots/api#sticker) thumbnail.
  */
-export interface PhotoSize {
+export interface TelegramPhotoSize {
   /**
    * Unique identifier for this file
    */
@@ -358,7 +357,7 @@ export interface PhotoSize {
 /**
  * This object represents an audio file to be treated as music by the  clients.
  */
-export interface Audio {
+export interface TelegramAudio {
   /**
    * Unique identifier for this file
    */
@@ -386,7 +385,7 @@ export interface Audio {
   /**
    * _Optional._ Thumbnail of the album cover to which the music file belongs
    */
-  thumb?: PhotoSize;
+  thumb?: TelegramPhotoSize;
 }
 
 /**
@@ -394,7 +393,7 @@ export interface Audio {
  * [voice messages](https://core.telegram.org/bots/api#voice)
  * and [audio files](https://core.telegram.org/bots/api#audio)).
  */
-export interface Document {
+export interface TelegramDocument {
   /**
    * Unique file identifier
    */
@@ -402,7 +401,7 @@ export interface Document {
   /**
    * _Optional._ Document thumbnail as defined by sender
    */
-  thumb?: PhotoSize;
+  thumb?: TelegramPhotoSize;
   /**
    * _Optional._ Original filename as defined by sender
    */
@@ -420,7 +419,7 @@ export interface Document {
 /**
  * This object represents a video file.
  */
-export interface Video {
+export interface TelegramVideo {
   /**
    * Unique identifier for this file
    */
@@ -440,7 +439,7 @@ export interface Video {
   /**
    * _Optional._ Video thumbnail
    */
-  thumb?: PhotoSize;
+  thumb?: TelegramPhotoSize;
   /**
    * _Optional._ Mime type of a file as defined by sender
    */
@@ -454,7 +453,7 @@ export interface Video {
 /**
  * This object represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
  */
-export interface Animation {
+export interface TelegramAnimation {
   /**
    * Unique file identifier
    */
@@ -474,7 +473,7 @@ export interface Animation {
   /**
    * _Optional._ Animation thumbnail as defined by sender
    */
-  thumb?: PhotoSize;
+  thumb?: TelegramPhotoSize;
   /**
    * _Optional._ Original animation filename as defined by sender
    */
@@ -492,7 +491,7 @@ export interface Animation {
 /**
  * This object represents a voice note.
  */
-export interface Voice {
+export interface TelegramVoice {
   /**
    * Unique identifier for this file
    */
@@ -515,7 +514,7 @@ export interface Voice {
  * This object represents a [video message](https://telegram.org/blog/video-messages-and-telescope)
  * (available in  apps as of [v.4.0](https://telegram.org/blog/video-messages-and-telescope)).
  */
-export interface VideoNote {
+export interface TelegramVideoNote {
   /**
    * Unique identifier for this file
    */
@@ -531,7 +530,7 @@ export interface VideoNote {
   /**
    * _Optional._ Video thumbnail
    */
-  thumb?: PhotoSize;
+  thumb?: TelegramPhotoSize;
   /**
    * _Optional._ File size
    */
@@ -541,7 +540,7 @@ export interface VideoNote {
 /**
  * This object represents a phone contact.
  */
-export interface Contact {
+export interface TelegramContact {
   /**
    * Contact's phone number
    */
@@ -567,7 +566,7 @@ export interface Contact {
 /**
  * This object represents a point on the map.
  */
-export interface Location {
+export interface TelegramLocation {
   /**
    * Longitude as defined by sender
    */
@@ -581,11 +580,11 @@ export interface Location {
 /**
  * This object represents a venue.
  */
-export interface Venue {
+export interface TelegramVenue {
   /**
    * Venue location
    */
-  location: Location;
+  location: TelegramLocation;
   /**
    * Name of the venue
    */
@@ -608,7 +607,7 @@ export interface Venue {
 /**
  * This object contains information about one answer option in a poll.
  */
-export interface PollOption {
+export interface TelegramPollOption {
   /**
    * Option text, 1-100 characters
    */
@@ -622,7 +621,7 @@ export interface PollOption {
 /**
  * This object contains information about a poll.
  */
-export interface Poll {
+export interface TelegramPoll {
   /**
    * Unique poll identifier
    */
@@ -634,7 +633,7 @@ export interface Poll {
   /**
    * List of poll options
    */
-  options: PollOption[];
+  options: TelegramPollOption[];
   /**
    * True, if the poll is closed
    */
@@ -644,7 +643,7 @@ export interface Poll {
 /**
  * This object represent a user's profile pictures.
  */
-export interface UserProfilePhotos {
+export interface TelegramUserProfilePhotos {
   /**
    * Total number of profile pictures the target user has
    */
@@ -652,7 +651,7 @@ export interface UserProfilePhotos {
   /**
    * Requested profile pictures (in up to 4 sizes each)
    */
-  phots: PhotoSize[][];
+  photos: TelegramPhotoSize[][];
 }
 
 /**
@@ -663,7 +662,7 @@ export interface UserProfilePhotos {
  *
  * > Maximum file size to download is 20 MB
  */
-export interface File {
+export interface TelegramFile {
   /**
    * Unique identifier for this file
    */
@@ -682,11 +681,11 @@ export interface File {
  * This object represents a [custom keyboard](https://core.telegram.org/bots#keyboards) with reply options
  * (see [Introduction to bots](https://core.telegram.org/bots#keyboards) for details and examples).
  */
-export interface ReplyKeyboardMarkup {
+export interface TelegramReplyKeyboardMarkup {
   /**
    * Array of button rows, each represented by an Array of [KeyboardButton](https://core.telegram.org/bots/api#keyboardbutton) objects
    */
-  keyboard: KeyboardButton[][];
+  keyboard: TelegramKeyboardButton[][];
   /**
    * _Optional._Requests clients to resize the keyboard vertically for optimal fit
    * (e.g., make the keyboard smaller if there are just two rows of buttons).
@@ -720,7 +719,7 @@ export interface ReplyKeyboardMarkup {
  * > __Note:__ request_contact and request_location options will only work in
  *  versions released after 9 April, 2016. Older clients will ignore them.
  */
-export interface KeyboardButton {
+export interface TelegramKeyboardButton {
   /**
    * Text of the button. If none of the optional fields are used, it will be sent as a message when the button is pressed
    */
@@ -741,7 +740,7 @@ export interface KeyboardButton {
  * An exception is made for one-time keyboards that are hidden immediately after the user presses a button
  * (see [ReplyKeyboardMarkup](https://core.telegram.org/bots/api#replykeyboardmarkup)).
  */
-export interface ReplyKeyboardRemove {
+export interface TelegramReplyKeyboardRemove {
   /**
    * Requests clients to remove the custom keyboard (user will not be able to summon
    * this keyboard; if you want to hide the keyboard from sight but keep it accessible, use _one_time_keyboard_ in
@@ -767,18 +766,18 @@ export interface ReplyKeyboardRemove {
  *
  * > **Note:** This will only work in  versions released after 9 April, 2016. Older clients will display _unsupported message_.
  */
-export interface InlineKeyboardMarkup {
+export interface TelegramInlineKeyboardMarkup {
   /**
    * Array of button rows, each represented by an Array of
    * [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton) objects
    */
-  inline_keyboard: InlineKeyboardButton[][];
+  inline_keyboard: TelegramInlineKeyboardButton[][];
 }
 
 /**This object represents one button of an inline keyboard.
  * You must use exactly one of the optional fields.
  */
-export interface InlineKeyboardButton {
+export interface TelegramInlineKeyboardButton {
   /**
    * Label text on the button
    */
@@ -791,7 +790,7 @@ export interface InlineKeyboardButton {
    * _Optional._ An HTTP URL used to automatically authorize the user.
    * Can be used as a replacement for the [ Login Widget](https://core.telegram.org/widgets/login).
    */
-  login_url?: LoginUrl;
+  login_url?: TelegramLoginUrl;
   /**
    * _Optional._ Data to be sent in a [callback query](https://core.telegram.org/bots/api#callbackquery) to
    * the bot when button is pressed, 1-64 bytes
@@ -821,7 +820,7 @@ export interface InlineKeyboardButton {
    *
    * **NOTE:** This type of button **must** always be the first button in the first row.
    */
-  callback_game?: CallbackGame;
+  callback_game?: TelegramCallbackGame;
   /**
    * _Optional._ Specify True, to send a [Pay button](https://core.telegram.org/bots/api#payments).
    *
@@ -839,7 +838,7 @@ export interface InlineKeyboardButton {
  *
  * > Sample bot: [@discussbot](https://t.me/discussbot)
  */
-export interface LoginUrl {
+export interface TelegramLoginUrl {
   /**
    * An HTTP URL to be opened with user authorization data added to the query string when the button is pressed.
    * If the user refuses to provide authorization data, the original URL without information about the user will be opened.
@@ -883,7 +882,7 @@ export interface LoginUrl {
  * [answerCallbackQuery](https://core.telegram.org/bots/api#answercallbackquery)
  * even if no notification to the user is needed (e.g., without specifying any of the optional parameters).
  */
-export interface CallbackQuery {
+export interface TelegramCallbackQuery {
   /**
    * Unique identifier for this query
    */
@@ -891,12 +890,12 @@ export interface CallbackQuery {
   /**
    * Sender
    */
-  from: User;
+  from: TelegramUser;
   /**
    * _Optional._ Message with the callback button that originated the query.
    * Note that message content and message date will not be available if the message is too old
    */
-  message?: Message;
+  message?: TelegramMessage;
   /**
    * _Optional._ Identifier of the message sent via the bot in inline mode, that originated the query.
    */
@@ -936,7 +935,7 @@ export interface CallbackQuery {
  * in your bot‘s questions, it will receive
  * the user’s answers even if it only receives replies, commands and mentions — without any extra work for the user.
  */
-export interface ForceReply {
+export interface TelegramForceReply {
   /**
    * Shows reply interface to the user, as if they manually selected the bot‘s message and tapped ’Reply'
    */
@@ -954,7 +953,7 @@ export interface ForceReply {
 /**
  * This object represents a chat photo.
  */
-export interface ChatPhoto {
+export interface TelegramChatPhoto {
   /**
    * Unique file identifier of small (160x160) chat photo. This file_id can be used only for photo download.
    */
@@ -968,11 +967,11 @@ export interface ChatPhoto {
 /**
  * This object contains information about one member of a chat.
  */
-export interface ChatMember {
+export interface TelegramChatMember {
   /**
    * Information about the user
    */
-  user: User;
+  user: TelegramUser;
   /**
    * The member's status in the chat. Can be “creator”, “administrator”, “member”, “restricted”, “left” or “kicked”
    */
@@ -1045,7 +1044,7 @@ export interface ChatMember {
 /**
  * Contains information about why a request was unsuccessful.
  */
-export interface ResponseParameters {
+export interface TelegramResponseParameters {
   /**
    * _Optional._ The group has been migrated to a supergroup with the specified identifier.
    * This number may be greater than 32 bits and some programming languages may
@@ -1067,11 +1066,11 @@ export interface ResponseParameters {
  * * InputMediaPhoto
  * * InputMediaVideo
  */
-export interface InputMedia {
+export interface TelegramInputMedia {
   /**
    * Type of the result, must be audio, photo, video, animation, or document
    */
-  type: 'audio' | 'photo' | 'video' | 'animation' | 'document';
+  type: string;
   /**
    * File to send. Pass a file_id to send a file that exists on the  servers (recommended),
    * pass an HTTP URL for  to get a file from the Internet, or pass “attach://<file_attach_name>”
@@ -1095,21 +1094,21 @@ export interface InputMedia {
 /**
  * Represents a photo to be sent.
  */
-export interface InputMediaPhoto extends InputMedia {
+export interface TelegramInputMediaPhoto extends TelegramInputMedia {
   /**
    * Type of the result, must be photo
    */
-  type: 'photo';
+  type: string;
 }
 
 /**
  * Represents a video to be sent.
  */
-export interface InputMediaVideo extends InputMedia {
+export interface TelegramInputMediaVideo extends TelegramInputMedia {
   /**
    * Type of the result, must be video
    */
-  type: 'video';
+  type: string;
   /**
    * _Optional._ Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side.
    * The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 320.
@@ -1140,7 +1139,7 @@ export interface InputMediaVideo extends InputMedia {
 /**
  * Represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
  */
-export interface InputMediaAnimation extends InputMedia {
+export interface TelegramInputMediaAnimation extends TelegramInputMedia {
   /**
    * Type of the result, must be animation
    */
@@ -1171,7 +1170,7 @@ export interface InputMediaAnimation extends InputMedia {
 /**
  * Represents an audio file to be treated as music to be sent.
  */
-export interface InputMediaAudio extends InputMedia {
+export interface TelegramInputMediaAudio extends TelegramInputMedia {
   /**
    * Type of the result, must be audio
    */
@@ -1202,7 +1201,7 @@ export interface InputMediaAudio extends InputMedia {
 /**
  * Represents a general file to be sent.
  */
-export interface InputMediaDocument extends InputMedia {
+export interface TelegramInputMediaDocument extends TelegramInputMedia {
   /**
    * Type of the result, must be document
    */
@@ -1227,7 +1226,7 @@ export interface InputMediaDocument extends InputMedia {
 /**
  * This object represents a sticker.
  */
-export interface Sticker {
+export interface TelegramSticker {
   /**
    * Unique identifier for this file
    */
@@ -1243,7 +1242,7 @@ export interface Sticker {
   /**
    * _Optional._ Sticker thumbnail in the .webp or .jpg format
    */
-  thumb?: PhotoSize;
+  thumb?: TelegramPhotoSize;
   /**
    * _Optional._ Emoji associated with the sticker
    */
@@ -1255,7 +1254,7 @@ export interface Sticker {
   /**
    * _Optional._ For mask stickers, the position where the mask should be placed
    */
-  mask_position?: MaskPosition;
+  mask_position?: TelegramMaskPosition;
   /**
    * _Optional._ File size
    */
@@ -1265,7 +1264,7 @@ export interface Sticker {
 /**
  * This object represents a sticker set.
  */
-export interface StickerSet {
+export interface TelegramStickerSet {
   /**
    * Sticker set name
    */
@@ -1281,13 +1280,13 @@ export interface StickerSet {
   /**
    * List of all set stickers
    */
-  stickers: Sticker[];
+  stickers: TelegramSticker[];
 }
 
 /**
  * This object describes the position on faces where a mask should be placed by default.
  */
-export interface MaskPosition {
+export interface TelegramMaskPosition {
   /**
    * The part of the face relative to which the mask should be placed. One of “forehead”, “eyes”, “mouth”, or “chin”.
    */
@@ -1317,7 +1316,7 @@ export interface MaskPosition {
 /**
  * This object represents a portion of the price for goods or services.
  */
-export interface LabeledPrice {
+export interface TelegramLabeledPrice {
   /**
    * Portion label
    */
@@ -1335,7 +1334,7 @@ export interface LabeledPrice {
 /**
  * This object contains basic information about an invoice.
  */
-export interface Invoice {
+export interface TelegramInvoice {
   /**
    * Product name
    */
@@ -1365,7 +1364,7 @@ export interface Invoice {
 /**
  * This object represents a shipping address.
  */
-export interface ShippingAddress {
+export interface TelegramShippingAddress {
   /**
    * ISO 3166-1 alpha-2 country code
    */
@@ -1395,7 +1394,7 @@ export interface ShippingAddress {
 /**
  * This object represents information about an order.
  */
-export interface OrderInfo {
+export interface TelegramOrderInfo {
   /**
    * _Optional._ User name
    */
@@ -1411,13 +1410,13 @@ export interface OrderInfo {
   /**
    * _Optional._ User shipping address
    */
-  shipping_address?: ShippingAddress;
+  shipping_address?: TelegramShippingAddress;
 }
 
 /**
  * This object represents one shipping option
  */
-export interface ShippingOption {
+export interface TelegramShippingOption {
   /**
    * Shipping option identifier
    */
@@ -1429,13 +1428,13 @@ export interface ShippingOption {
   /**
    * List of price portions
    */
-  prices: LabeledPrice[];
+  prices: TelegramLabeledPrice[];
 }
 
 /**
  * This object contains basic information about a successful payment
  */
-export interface SuccessfulPayment {
+export interface TelegramSuccessfulPayment {
   /**
    * Three-letter ISO 4217 [currency](https://core.telegram.org/bots/payments#supported-currencies) code
    */
@@ -1459,7 +1458,7 @@ export interface SuccessfulPayment {
   /**
    * _Optional._ Order info provided by the user
    */
-  order_info?: OrderInfo;
+  order_info?: TelegramOrderInfo;
   /**
    *  payment identifier
    */
@@ -1473,7 +1472,7 @@ export interface SuccessfulPayment {
 /**
  * This object contains information about an incoming pre-checkout query
  */
-export interface PreCheckoutQuery {
+export interface TelegramPreCheckoutQuery {
   /**
    * Unique query identifier
    */
@@ -1481,7 +1480,7 @@ export interface PreCheckoutQuery {
   /**
    * User who sent the query
    */
-  from: User;
+  from: TelegramUser;
   /**
    * Three-letter ISO 4217 [currency](https://core.telegram.org/bots/payments#supported-currencies) code
    */
@@ -1505,7 +1504,7 @@ export interface PreCheckoutQuery {
   /**
    * _Optional._ Order info provided by the user
    */
-  order_info?: OrderInfo;
+  order_info?: TelegramOrderInfo;
 }
 
 /*************************************
@@ -1517,22 +1516,22 @@ export interface PreCheckoutQuery {
 /**
  * Containts information about  Passport data shared with the bot by the user
  */
-export interface PassportData {
+export interface TelegramPassportData {
   /**
    * Array with information about documents and other  Passport elements that was shared with the bot
    */
-  data: EncryptedPassportElement[];
+  data: TelegramEncryptedPassportElement[];
   /**
    * Encrypted credentials required to decrypt the data
    */
-  credentials: EncryptedCredentials;
+  credentials: TelegramEncryptedCredentials;
 }
 
 /**
  * This object represents a file uploaded to  Passport.
  * Currently all  Passport files are in JPEG format when decrypted and don't exceed 10MB.
  */
-export interface PassportFile {
+export interface TelegramPassportFile {
   /**
    * Unique identifier for this file
    */
@@ -1549,7 +1548,7 @@ export interface PassportFile {
 /**
  * Contains information about documents or other  Passport elements shared with the bot by the user.
  */
-export interface EncryptedPassportElement {
+export interface TelegramEncryptedPassportElement {
   /**
    * Element type. One of “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport”,
    * “address”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”, “temporary_registration”,
@@ -1589,32 +1588,32 @@ export interface EncryptedPassportElement {
    * types. Files can be decrypted and verified using the accompanying
    * [EncryptedCredentials.](https://core.telegram.org/bots/api#encryptedcredentials)
    */
-  files?: PassportFile[];
+  files?: TelegramPassportFile[];
   /**
    * _Optional._ Encrypted file with the front side of the document, provided by the user. Available for “passport”,
    * “driver_license”, “identity_card” and “internal_passport”. The file can be decrypted and verified using the
    * accompanying [EncryptedCredentials.](https://core.telegram.org/bots/api#encryptedcredentials)
    */
-  front_side?: PassportFile;
+  front_side?: TelegramPassportFile;
   /**
    * _Optional._ Encrypted file with the reverse side of the document, provided by the user. Available for “driver_license”
    * and “identity_card”. The file can be decrypted and verified using the accompanying
    * [EncryptedCredentials.](https://core.telegram.org/bots/api#encryptedcredentials)
    */
-  reverse_side?: PassportFile;
+  reverse_side?: TelegramPassportFile;
   /**
    * _Optional._ Encrypted file with the selfie of the user holding a document, provided by the user; available for “passport”,
    * “driver_license”, “identity_card” and “internal_passport”. The file can be decrypted and verified using the accompanying
    * [EncryptedCredentials.](https://core.telegram.org/bots/api#encryptedcredentials)
    */
-  selfie?: PassportFile;
+  selfie?: TelegramPassportFile;
   /**
    * _Optional._ Array of encrypted files with translated versions of documents provided by the user. Available if requested for “passport”,
    * “driver_license”, “identity_card”, “internal_passport”, “utility_bill”, “bank_statement”,
    * “rental_agreement”, “passport_registration” and “temporary_registration” types. Files can be decrypted and verified
    * using the accompanying [EncryptedCredentials.](https://core.telegram.org/bots/api#encryptedcredentials)
    */
-  translation?: PassportFile[];
+  translation?: TelegramPassportFile[];
   /**
    * Base64-encoded element hash for using in
    * [PassportElementErrorUnspecified](https://core.telegram.org/bots/api#passportelementerrorunspecified)
@@ -1628,7 +1627,7 @@ export interface EncryptedPassportElement {
  * See the [ Passport Documentation](https://core.telegram.org/passport#receiving-information)
  * for a complete description of the data decryption and authentication processes.
  */
-export interface EncryptedCredentials {
+export interface TelegramEncryptedCredentials {
   /**
    * Base64-encoded encrypted JSON-serialized data with unique user's payload, data hashes and secrets required for
    * [EncryptedPassportElement](https://core.telegram.org/bots/api#encryptedpassportelement) decryption and authentication
@@ -1653,7 +1652,7 @@ export interface EncryptedCredentials {
 /**
  * This object represents a game. Use BotFather to create and edit games, their short names will act as unique identifiers.
  */
-export interface Game {
+export interface TelegramGame {
   /**
    * Title of the game
    */
@@ -1665,7 +1664,7 @@ export interface Game {
   /**
    * Photo that will be displayed in the game message in chats
    */
-  photo: PhotoSize[];
+  photo: TelegramPhotoSize[];
   /**
    * _Optional._ Brief description of the game or high scores included in the game message. Can be automatically
    * edited to include current high scores for the game when the bot calls
@@ -1676,23 +1675,23 @@ export interface Game {
   /**
    * _Optional._ Special entities that appear in text, such as usernames, URLs, bot commands, etc.
    */
-  text_entities?: MessageEntity[];
+  text_entities?: TelegramMessageEntity[];
   /**
    * _Optional._ Animation that will be displayed in the game message in chats. Upload via [BotFather](https://t.me/botfather)
    */
-  animation?: Animation;
+  animation?: TelegramAnimation;
 }
 
 /**
  * A placeholder, currently holds no information. Use BotFather to set up your game.
  */
 // tslint:disable-next-line
-export interface CallbackGame {}
+export interface TelegramCallbackGame {}
 
 /**
  * This object represents one row of the high scores table for a game.
  */
-export interface GameHighScore {
+export interface TelegramGameHighScore {
   /**
    * Position in high score table for the game
    */
@@ -1700,7 +1699,7 @@ export interface GameHighScore {
   /**
    * User who set the high score
    */
-  user: User;
+  user: TelegramUser;
   /**
    * What the score was
    */
@@ -1717,32 +1716,14 @@ export interface GameHighScore {
  * Response object sent from . If "ok" is true, the API callout was successful,
  * otherwise the error_code, and description will have information about what happened
  */
-export interface Response<T> {
+export interface TelegramResponse<T> {
   ok: boolean;
   result?: T;
   error_code?: number;
   description?: string;
 }
 
-/**
- * Wrapper for the response type of either Observable or Promise, depending on the API parameters set
- */
-export type ServiceResponse<T> = Observable<T> | Promise<T>;
-
-/********************************************
- *
- * T E L E G R A M   A P I   O P T I O N S
- *
- ********************************************/
-
-/**
- * Options to pass to the API on whether to return a Promise of an Observable
- */
-export interface APIOptions {
-  promise: boolean;
-}
-
-export class Exception extends BadRequestException {
+export class TelegramException extends BadRequestException {
   constructor(message?: string | object | any, error?: string) {
     super(message, error);
   }
@@ -1754,14 +1735,14 @@ export class Exception extends BadRequestException {
  *
  */
 
-interface ChatId {
+interface TelegramChatId {
   /**
    * Unique identifier for the target group or username of the target supergroup or channel (in the format `@channelusername`)
    */
   chat_id: number | string;
 }
 
-export interface SendMessageParams extends ChatId {
+export interface TelegramSendMessageParams extends TelegramChatId {
   /**
    * Text of the message to be sent
    */
@@ -1791,13 +1772,13 @@ export interface SendMessageParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface ForwardMessageParams extends ChatId {
+export interface TelegramForwardMessageParams extends TelegramChatId {
   /**
    * Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
    */
@@ -1812,7 +1793,7 @@ export interface ForwardMessageParams extends ChatId {
   message_id: number;
 }
 
-export interface SendPhotoParams extends ChatId {
+export interface TelegramSendPhotoParams extends TelegramChatId {
   /**
    * Photo to send. Pass a file_id as String to send a photo that exists on the  servers
    * (recommended), pass an HTTP URL as a String for  to get a photo from the Internet, or upload a new photo using
@@ -1844,13 +1825,13 @@ export interface SendPhotoParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendAudioParams extends ChatId {
+export interface TelegramSendAudioParams extends TelegramChatId {
   /**
    * Audio file to send. Pass a file_id as String to send an audio file that exists on the  servers (recommended),
    * pass an HTTP URL as a String for  to get an audio file from the Internet,
@@ -1902,13 +1883,13 @@ export interface SendAudioParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendDocumentParams extends ChatId {
+export interface TelegramSendDocumentParams extends TelegramChatId {
   /**
    * File to send. Pass a file_id as String to send a file that exists on the  servers (recommended),
    * pass an HTTP URL as a String for  to get a file from the Internet,
@@ -1948,13 +1929,13 @@ export interface SendDocumentParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendVideoParams extends ChatId {
+export interface TelegramSendVideoParams extends TelegramChatId {
   /**
    * Video to send. Pass a file_id as String to send a video that exists on the  servers (recommended),
    * pass an HTTP URL as a String for  to get a video from the Internet,
@@ -2010,13 +1991,13 @@ export interface SendVideoParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendVideoNoteParams extends ChatId {
+export interface TelegramSendVideoNoteParams extends TelegramChatId {
   /**
    * Video note to send. Pass a file_id as String to send a video note that exists on the  servers (recommended),
    * pass an HTTP URL as a String for  to get a video from the Internet,
@@ -2058,13 +2039,13 @@ export interface SendVideoNoteParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendAnimationParams extends ChatId {
+export interface TelegramSendAnimationParams extends TelegramChatId {
   /**
    * Animation to send. Pass a file_id as String to send a animation that exists on the  servers (recommended),
    * pass an HTTP URL as a String for  to get a animation from the Internet,
@@ -2116,13 +2097,13 @@ export interface SendAnimationParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendVoiceParams extends ChatId {
+export interface TelegramSendVoiceParams extends TelegramChatId {
   /**
    * Audio file to send. Pass a file_id as String to send a file that exists on the  servers (recommended),
    * pass an HTTP URL as a String for  to get a file from the Internet,
@@ -2174,13 +2155,13 @@ export interface SendVoiceParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendVoiceParams extends ChatId {
+export interface TelegramSendVoiceParams extends TelegramChatId {
   /**
    * Video note to send. Pass a file_id as String to send a video note that exists on the  servers (recommended),
    * pass an HTTP URL as a String for  to get a file from the Internet,
@@ -2224,17 +2205,17 @@ export interface SendVoiceParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendMediaGroupParams extends ChatId {
+export interface TelegramSendMediaGroupParams extends TelegramChatId {
   /**
    * A JSON-serialized array describing photos and videos to be sent, must include 2–10 items
    */
-  media: InputMediaPhoto[] | InputMediaVideo[];
+  media: TelegramInputMediaPhoto[] | TelegramInputMediaVideo[];
   /**
    * Sends the message [silently](https://telegram.org/blog/channels-2-0#silent-messages). Users will receive a notification with no sound.
    */
@@ -2245,7 +2226,7 @@ export interface SendMediaGroupParams extends ChatId {
   reply_to_message_id?: number;
 }
 
-export interface SendLocationParams extends ChatId {
+export interface TelegramSendLocationParams extends TelegramChatId {
   /**
    * Latitude of the location
    */
@@ -2270,13 +2251,13 @@ export interface SendLocationParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface EditMessageLiveLocationParams {
+export interface TelegramEditMessageLiveLocationParams {
   /**
    * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
    * channel (in the format `@channelusername`)
@@ -2293,7 +2274,7 @@ export interface EditMessageLiveLocationParams {
   /**
    * Latitude of new location
    */
-  latitude?: number;
+  latitude: number;
   /**
    * Longitude of new location
    */
@@ -2301,10 +2282,10 @@ export interface EditMessageLiveLocationParams {
   /**
    * A JSON-serialized object for a new [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    */
-  reply_markup?: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface StopMessageLiveLocationParams {
+export interface TelegramStopMessageLiveLocationParams {
   /**
    * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
    * channel (in the format `@channelusername`)
@@ -2321,10 +2302,10 @@ export interface StopMessageLiveLocationParams {
   /**
    * A JSON-serialized object for a new [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    */
-  reply_markup?: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface SendVenueParams extends ChatId {
+export interface TelegramSendVenueParams extends TelegramChatId {
   /**
    * Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
    */
@@ -2368,13 +2349,13 @@ export interface SendVenueParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendContactParams extends ChatId {
+export interface TelegramSendContactParams extends TelegramChatId {
   /**
    * Contact's phone number
    */
@@ -2406,13 +2387,13 @@ export interface SendContactParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendPollParams extends ChatId {
+export interface TelegramSendPollParams extends TelegramChatId {
   /**
    * Poll question, 1-255 characters
    */
@@ -2436,13 +2417,13 @@ export interface SendPollParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface SendChatActionParams extends ChatId {
+export interface TelegramSendChatActionParams extends TelegramChatId {
   /**
    * Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for
    * [text messages](https://core.telegram.org/bots/api#sendmessage),
@@ -2456,7 +2437,7 @@ export interface SendChatActionParams extends ChatId {
   action: string;
 }
 
-export interface GetUserProfilePhotosParams {
+export interface TelegramGetUserProfilePhotosParams {
   /**
    * Unique identifier of the target user
    */
@@ -2471,14 +2452,15 @@ export interface GetUserProfilePhotosParams {
   limit?: number;
 }
 
-export interface GetFileParams {
+export interface TelegramGetFileParams {
   /**
    * File identifier to get info about
    */
   file_id: string;
 }
 
-export interface KickChatMemberParams extends UnbanChatMemberParams {
+export interface TelegramKickChatMemberParams
+  extends TelegramUnbanChatMemberParams {
   /**
    * Date when the user will be unbanned, unix time. If user is banned for more than 366 days or
    * less than 30 seconds from the current time they are considered to be banned forever
@@ -2486,14 +2468,15 @@ export interface KickChatMemberParams extends UnbanChatMemberParams {
   until_date?: number;
 }
 
-export interface UnbanChatMemberParams extends ChatId {
+export interface TelegramUnbanChatMemberParams extends TelegramChatId {
   /**
    * Unique identifier of the target user
    */
   user_id: number;
 }
 
-export interface RestrictChatMemberParams extends KickChatMemberParams {
+export interface TelegramRestrictChatMemberParams
+  extends TelegramKickChatMemberParams {
   /**
    * Pass True, if the user can send text messages, contacts, locations and venues
    */
@@ -2512,7 +2495,8 @@ export interface RestrictChatMemberParams extends KickChatMemberParams {
   can_add_web_page_previews?: boolean;
 }
 
-export interface PromoteChatMemberParams extends UnbanChatMemberParams {
+export interface TelegramPromoteChatMemberParams
+  extends TelegramUnbanChatMemberParams {
   /**
    * Pass True, if the administrator can change chat title, photo and other settings
    */
@@ -2548,32 +2532,32 @@ export interface PromoteChatMemberParams extends UnbanChatMemberParams {
   can_promote_members?: boolean;
 }
 
-export interface ExportChatInviteLinkParams extends ChatId {}
+export interface TelegramExportChatInviteLinkParams extends TelegramChatId {}
 
-export interface SetChatPhotoParams extends ChatId {
+export interface TelegramSetChatPhotoParams extends TelegramChatId {
   /**
    * New chat photo, uploaded using multipart/form-data
    */
   photo: Buffer;
 }
 
-export interface DeleteChatPhotoParams extends ChatId {}
+export interface TelegramDeleteChatPhotoParams extends TelegramChatId {}
 
-export interface SetChatTitleParams extends ChatId {
+export interface TelegramSetChatTitleParams extends TelegramChatId {
   /***
    * New chat title, 1-255 characters
    */
   title: string;
 }
 
-export interface SetChatDescriptionParams extends ChatId {
+export interface TelegramSetChatDescriptionParams extends TelegramChatId {
   /**
    * New chat description, 0-255 characters
    */
   description?: string;
 }
 
-export interface PinChatMessageParams extends ChatId {
+export interface TelegramPinChatMessageParams extends TelegramChatId {
   /**
    * Identifier of a message to pin
    */
@@ -2585,33 +2569,33 @@ export interface PinChatMessageParams extends ChatId {
   disable_notifications?: boolean;
 }
 
-export interface UnpinChatMessageParams extends ChatId {}
+export interface TelegramUnpinChatMessageParams extends TelegramChatId {}
 
-export interface LeaveChatParams extends ChatId {}
+export interface TelegramLeaveChatParams extends TelegramChatId {}
 
-export interface GetChatParams extends ChatId {}
+export interface TelegramGetChatParams extends TelegramChatId {}
 
-export interface GetChatAdministratorsParams extends ChatId {}
+export interface TelegramGetChatAdministratorsParams extends TelegramChatId {}
 
-export interface GetChatMembersCountParams extends ChatId {}
+export interface TelegramGetChatMembersCountParams extends TelegramChatId {}
 
-export interface GetChatMemberParams extends ChatId {
+export interface TelegramGetChatMemberParams extends TelegramChatId {
   /**
    * Unique identifier of the target user
    */
   user_id: number;
 }
 
-export interface SetChatStickerSetParams extends ChatId {
+export interface TelegramSetChatStickerSetParams extends TelegramChatId {
   /**
    * Name of the sticker set to be set as the group sticker set
    */
   sticker_set_name: string;
 }
 
-export interface ChatDeleteStickerSetParams extends ChatId {}
+export interface TelegramChatDeleteStickerSetParams extends TelegramChatId {}
 
-export interface AnswerCallbackQueryParams {
+export interface TelegramAnswerCallbackQueryParams {
   /**
    * Unique identifier for the query to be answered
    */
@@ -2640,7 +2624,7 @@ export interface AnswerCallbackQueryParams {
   cache_time?: number;
 }
 
-interface EditMessageId {
+interface TelegramEditMessageId {
   /**
    * Required if inline_message_id is not specified.
    * Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
@@ -2656,7 +2640,7 @@ interface EditMessageId {
   inline_message_id?: string;
 }
 
-export interface EditMessageTextParams extends EditMessageId {
+export interface TelegramEditMessageTextParams extends TelegramEditMessageId {
   /**
    * 	New text of the message
    */
@@ -2674,10 +2658,11 @@ export interface EditMessageTextParams extends EditMessageId {
   /**
    * A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    */
-  reply_markup?: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface EditMessageCaptionParams extends EditMessageId {
+export interface TelegramEditMessageCaptionParams
+  extends TelegramEditMessageId {
   /**
    * New caption of the message
    */
@@ -2691,28 +2676,29 @@ export interface EditMessageCaptionParams extends EditMessageId {
   /**
    * A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    */
-  reply_markup: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface EditMessageMediaParams extends EditMessageId {
+export interface TelegramEditMessageMediaParams extends TelegramEditMessageId {
   /**
    * A JSON-serialized object for a new media content of the message
    */
-  media: InputMedia;
+  media: TelegramInputMedia;
   /**
    * A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    */
-  reply_markup: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface EditMessageReplyMarkupParams extends EditMessageId {
+export interface TelegramEditMessageReplyMarkupParams
+  extends TelegramEditMessageId {
   /**
    * A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    */
-  reply_markup: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface StopPollParams extends ChatId {
+export interface TelegramStopPollParams extends TelegramChatId {
   /**
    * Identifier of the original message with the poll
    */
@@ -2720,17 +2706,17 @@ export interface StopPollParams extends ChatId {
   /**
    * A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    */
-  reply_markup: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface DeleteMessageParams extends ChatId {
+export interface TelegramDeleteMessageParams extends TelegramChatId {
   /**
    * Identifier of the message to delete
    */
   message_id: number;
 }
 
-export interface SendStickerParams extends ChatId {
+export interface TelegramSendStickerParams extends TelegramChatId {
   /**
    * Sticker to send. Pass a file_id as String to send a file that exists on the  servers (recommended),
    * pass an HTTP URL as a String for  to get a .webp file from the Internet, or upload a new one
@@ -2752,20 +2738,20 @@ export interface SendStickerParams extends ChatId {
    * , instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply;
+    | TelegramInlineKeyboardMarkup
+    | TelegramReplyKeyboardMarkup
+    | TelegramReplyKeyboardRemove
+    | TelegramForceReply;
 }
 
-export interface GetStickerSetParams {
+export interface TelegramGetStickerSetParams {
   /**
    * Name of the sticker set
    */
   name: string;
 }
 
-export interface UploadStickerFileParams {
+export interface TelegramUploadStickerFileParams {
   /**
    * User identifier of sticker file owner
    */
@@ -2777,7 +2763,7 @@ export interface UploadStickerFileParams {
   png_sticker: Buffer;
 }
 
-export interface CreateNewStickerSetParams {
+export interface TelegramCreateNewStickerSetParams {
   /**
    * User identifier of created sticker set owner
    */
@@ -2810,10 +2796,10 @@ export interface CreateNewStickerSetParams {
   /**
    * A JSON-serialized object for position where the mask should be placed on faces
    */
-  mask_position?: MaskPosition;
+  mask_position?: TelegramMaskPosition;
 }
 
-export interface AddStickerToSetParams {
+export interface TelegramAddStickerToSetParams {
   /**
    * User identifier of sticker set owner
    */
@@ -2836,10 +2822,10 @@ export interface AddStickerToSetParams {
   /**
    * A JSON-serialized object for position where the mask should be placed on faces
    */
-  mask_position?: MaskPosition;
+  mask_position?: TelegramMaskPosition;
 }
 
-export interface SetStickerPositionInSetParams {
+export interface TelegramSetStickerPositionInSetParams {
   /**
    * File identifier of the sticker
    */
@@ -2850,14 +2836,14 @@ export interface SetStickerPositionInSetParams {
   position: number;
 }
 
-export interface DeleteStickerFromSetParams {
+export interface TelegramDeleteStickerFromSetParams {
   /**
    * File identifier of the sticker
    */
   sticker: string;
 }
 
-export interface SendInvoiceParams extends ChatId {
+export interface TelegramSendInvoiceParams extends TelegramChatId {
   /**
    * Product name, 1-32 characters
    */
@@ -2885,7 +2871,7 @@ export interface SendInvoiceParams extends ChatId {
   /**
    * Price breakdown, a list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
    */
-  prices: LabeledPrice[];
+  prices: TelegramLabeledPrice[];
   /**
    * JSON-encoded data about the invoice, which will be shared with the payment provider. A detailed description of
    * required fields should be provided by the payment provider.
@@ -2948,10 +2934,10 @@ export interface SendInvoiceParams extends ChatId {
    * A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    * If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
    */
-  reply_markup?: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface AnswerShippingQueryParams {
+export interface TelegramAnswerShippingQueryParams {
   /**
    * Unique identifier for the query to be answered
    */
@@ -2964,7 +2950,7 @@ export interface AnswerShippingQueryParams {
   /**
    * Required if ok is True. A JSON-serialized array of available shipping options.
    */
-  shipping_options?: ShippingOption[];
+  shipping_options?: TelegramShippingOption[];
   /**
    * Required if ok is False. Error message in human readable form that explains why it is impossible to complete
    * the order (e.g. "Sorry, delivery to your desired address is unavailable').  will display this message to the user.
@@ -2972,7 +2958,7 @@ export interface AnswerShippingQueryParams {
   error_message?: string;
 }
 
-export interface AnswerPreCheckoutQueryParams {
+export interface TelegramAnswerPreCheckoutQueryParams {
   /**
    * Unique identifier for the query to be answered
    */
@@ -2990,7 +2976,7 @@ export interface AnswerPreCheckoutQueryParams {
   error_message?: string;
 }
 
-export interface SendGameParams extends ChatId {
+export interface TelegramSendGameParams extends TelegramChatId {
   /**
    * Short name of the game, serves as the unique identifier for the game. Set up your games via [Botfather](https://t.me/botfather).
    */
@@ -3007,10 +2993,10 @@ export interface SendGameParams extends ChatId {
    * 	A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating).
    * If empty, one ‘Play game_title’ button will be shown. If not empty, the first button must launch the game.
    */
-  reply_markup?: InlineKeyboardMarkup;
+  reply_markup?: TelegramInlineKeyboardMarkup;
 }
 
-export interface SetGameScoreParams {
+export interface TelegramSetGameScoreParams {
   /**
    * User identifier
    */
@@ -3041,7 +3027,7 @@ export interface SetGameScoreParams {
   inline_message_id?: string;
 }
 
-export interface GetGameHighScoreParams {
+export interface TelegramGetGameHighScoreParams {
   /**
    * Target user id
    */

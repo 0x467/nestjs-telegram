@@ -2,7 +2,6 @@ import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
 
 export interface TelegramModuleOptions {
   botKey: string;
-  promise?: boolean;
 }
 
 export interface TelegramOptionsFactory {

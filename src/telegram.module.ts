@@ -14,14 +14,14 @@ import { TelegramService } from './telegram.service';
   exports: [TelegramService],
 })
 export class TelegramModule {
-  static register(options: TelegramModuleOptions): DynamicModule {
+  static forRoot(options: TelegramModuleOptions): DynamicModule {
     return {
       module: TelegramModule,
       providers: createTelegramProvider(options),
     };
   }
 
-  static registerAsync(options: TelegramModuleAsyncOptions): DynamicModule {
+  static forRootAsync(options: TelegramModuleAsyncOptions): DynamicModule {
     return {
       module: TelegramModule,
       imports: options.imports || [],
