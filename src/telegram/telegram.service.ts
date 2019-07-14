@@ -1,33 +1,14 @@
-import {
-  HttpService,
-  Inject,
-  Injectable,
-  Logger,
-  OnModuleInit,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { HttpService, Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { AxiosRequestConfig } from 'axios';
 import { catchError, map } from 'rxjs/operators';
 import { TelegramModuleOptions } from './interfaces/telegram-module-options.interface';
-import {
-  TelegramAPIOptions,
-  TelegramException,
-  TelegramFile,
-  TelegramMessage,
-  TelegramResponse,
-  TelegramUser,
-  TelegramUserProfilePhotos,
-  TelegramChat,
-  TelegramChatMember,
-  TelegramServiceResponse,
-  TelegramPoll,
-} from './interfaces/telegramTypes.interface';
+import * as Telegram from './interfaces/telegramTypes.interface';
 import { TELEGRAM_MODULE_OPTIONS } from './telegram.constants';
 
 @Injectable()
 export class TelegramService implements OnModuleInit {
   private url: string;
   private usePromise: boolean;
-  private logger = new Logger(TelegramService.name);
 
   constructor(
     @Inject(TELEGRAM_MODULE_OPTIONS)
@@ -43,14 +24,15 @@ export class TelegramService implements OnModuleInit {
   private doCall<T>(
     url: string,
     data?: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
+    options?: Telegram.APIOptions,
+    axiosOptions?: AxiosRequestConfig,
+  ): Telegram.ServiceResponse<T> {
     const callout$ = this.http
-      .post<TelegramResponse<T>>(this.url + url, data)
+      .post<Telegram.Response<T>>(this.url + url, data, axiosOptions)
       .pipe(
         map((res) => {
           if (!res.data.ok) {
-            throw new TelegramException(
+            throw new Telegram.Exception(
               res.data.description,
               res.data.error_code.toString(),
             );
@@ -58,7 +40,7 @@ export class TelegramService implements OnModuleInit {
           return res.data.result;
         }),
         catchError((error: Error) => {
-          throw new TelegramException(error.message);
+          throw new Telegram.Exception(error.message);
         }),
       );
     if (options.promise || this.usePromise) {
@@ -67,22 +49,90 @@ export class TelegramService implements OnModuleInit {
     return callout$;
   }
 
-  getMe(options?: TelegramAPIOptions): TelegramServiceResponse<TelegramUser> {
-    return this.doCall<TelegramUser>(this.getMe.name, {}, options);
+  /**
+   * A simple method for testing your bot's auth token. Requires no parameters.
+   * Returns basic information about the bot in form of a User object.
+   */
+  getMe(
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.User> {
+    return this.doCall<Telegram.User>(this.getMe.name, {}, options);
   }
 
+  /**
+   * Use this method to send text messages. On success, the sent Message is returned.
+   *
+   * ### Formatting options
+   * The Bot API supports basic formatting for messages. You can use bold and italic text, as well as inline links and pre-formatted
+   * code in your bots' messages.
+   *  clients will render them accordingly. You can use either markdown-style or HTML-style formatting.
+   *
+   * Note that clients will display an alert to the user before opening an inline link
+   * (‘Open this link?’ together with the full URL).
+   *
+   * Links tg://user?id=<user_id> can be used to mention a user by their id without using a username. Please note:
+   *
+   * These links will work only if they are used inside an inline link. For example, they will not work,
+   * when used in an inline keyboard button or in a message text.
+   * These mentions are only guaranteed to work if the user has contacted the bot in the past,
+   * has sent a callback query to the bot via inline button or is a member in the group where he was mentioned.
+   *
+   *
+   *
+   * Markdown style
+   * To use this mode, pass Markdown in the parse_mode field when using sendMessage. Use the following syntax in your message:
+   *
+   * \*bold text\*
+   *
+   * \_italic text\_
+   *
+   * \[inline URL\]\(http://www.example.com/\)
+   *
+   * \[inline mention of a user\]\(tg://user?id=123456789\)
+   *
+   * \`inline fixed-width code\`
+   *
+   * \`\`\`block_language
+   * pre-formatted fixed-width code block
+   * \`\`\`
+   *
+   *
+   *
+   * HTML style
+   * To use this mode, pass HTML in the parse_mode field when using sendMessage. The following tags are currently supported:
+   *
+   * <b>bold</b>, <strong>bold</strong>
+   *
+   * <i>italic</i>, <em>italic</em>
+   *
+   * <a href="http://www.example.com/">inline URL</a>
+   *
+   * <a href="tg://user?id=123456789">inline mention of a user</a>
+   *
+   * <code>inline fixed-width code</code>
+   *
+   * <pre>pre-formatted fixed-width code block</pre>
+   *
+   * Please note:
+   * Only the tags mentioned above are currently supported.
+   * Tags must not be nested.
+   * All <, > and & symbols that are not a part of a tag or an HTML entity must be replaced with the
+   * corresponding HTML entities (< with &lt;, > with &gt; and & with &amp;).
+   * All numerical HTML entities are supported.
+   * The API currently supports only the following named HTML entities: &lt;, &gt;, &amp; and &quot;.
+   */
   sendMessage(
-    data: TelegramSendMessageParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendMessage.name, data, options);
+    data: Telegram.SendMessageParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendMessage.name, data, options);
   }
 
   forwardMessage(
-    data: TelegramForwardMessageParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(
+    data: Telegram.ForwardMessageParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
       this.forwardMessage.name,
       data,
       options,
@@ -90,77 +140,147 @@ export class TelegramService implements OnModuleInit {
   }
 
   sendPhoto(
-    data: TelegramSendPhotoParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendPhoto.name, data, options);
+    data: Telegram.SendPhotoParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendPhoto.name, data, options, {
+      headers: {
+        'Content-Type':
+          typeof data.photo === 'object'
+            ? 'multipart/form-data'
+            : 'application/json',
+      },
+    });
   }
 
   sendAudio(
-    data: TelegramSendAudioParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendAudio.name, data, options);
+    data: Telegram.SendAudioParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendAudio.name, data, options, {
+      headers: {
+        'Content-Type':
+          typeof data.audio === 'object' || typeof data.thumb === 'object'
+            ? 'multipart/form-data'
+            : 'application/json',
+      },
+    });
   }
 
   sendDocument(
-    data: TelegramSendDocumentParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendDocument.name, data, options);
+    data: Telegram.SendDocumentParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
+      this.sendDocument.name,
+      data,
+      options,
+      {
+        headers: {
+          'Content-Type':
+            typeof data.document === 'object' || typeof data.thumb === 'object'
+              ? 'multipart/form-data'
+              : 'application/json',
+        },
+      },
+    );
   }
 
   sendVideo(
-    data: TelegramSendVideoParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendVideo.name, data, options);
+    data: Telegram.SendVideoParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendVideo.name, data, options, {
+      headers: {
+        'Content-Type':
+          typeof data.video === 'object' || typeof data.thumb === 'object'
+            ? 'multipart/form-data'
+            : 'application/json',
+      },
+    });
   }
 
   sendAnimation(
-    data: TelegramSendAnimationParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendAnimation.name, data, options);
+    data: Telegram.SendAnimationParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
+      this.sendAnimation.name,
+      data,
+      options,
+      {
+        headers: {
+          'Content-Type':
+            typeof data.animation === 'object' || typeof data.thumb === 'object'
+              ? 'multipart/form-data'
+              : 'application/json',
+        },
+      },
+    );
   }
 
   sendVoice(
-    data: TelegramSendVoiceParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendVoice.name, data, options);
+    data: Telegram.SendVoiceParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendVoice.name, data, options, {
+      headers: {
+        'Content-Type':
+          typeof data.voice === 'object' || typeof data.thumb === 'object'
+            ? 'multipart/form-data'
+            : 'application/json',
+      },
+    });
   }
 
   sendVideoNote(
-    data: TelegramSendVideoNoteParas,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendVideoNote.name, data, options);
+    data: Telegram.SendVideoNoteParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
+      this.sendVideoNote.name,
+      data,
+      options,
+      {
+        headers: {
+          'Content-Type':
+            typeof data.video_note === 'object' ||
+            typeof data.thumb === 'object'
+              ? 'multipart/form-data'
+              : 'application/json',
+        },
+      },
+    );
   }
 
   sendMediaGroup(
-    data: TelegramSendMediaGroupParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage[]> {
-    return this.doCall<TelegramMessage[]>(
+    data: Telegram.SendMediaGroupParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message[]> {
+    return this.doCall<Telegram.Message[]>(
       this.sendMediaGroup.name,
       data,
       options,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
     );
   }
 
   sendLocation(
-    data: TelegramSendLocationParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendLocation.name, data, options);
+    data: Telegram.SendLocationParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendLocation.name, data, options);
   }
 
   editMessageLiveLocation(
-    data: TelegramEditMessageLiveLocationParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(
+    data: Telegram.EditMessageLiveLocationParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
       this.editMessageLiveLocation.name,
       data,
       options,
@@ -168,10 +288,10 @@ export class TelegramService implements OnModuleInit {
   }
 
   stopMessageLiveLocation(
-    data: TelegramStopMessageLiveLocationParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(
+    data: Telegram.StopMessageLiveLocationParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
       this.stopMessageLiveLocation.name,
       data,
       options,
@@ -179,38 +299,38 @@ export class TelegramService implements OnModuleInit {
   }
 
   sendVenue(
-    data: TelegramSendVanueParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendVenue.name, data, options);
+    data: Telegram.SendVenueParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendVenue.name, data, options);
   }
 
   sendContact(
-    data: TelegramSendContactParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendContact.name, data, options);
+    data: Telegram.SendContactParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendContact.name, data, options);
   }
 
   sendPoll(
-    data: TelegramSendPollParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(this.sendPoll.name, data, options);
+    data: Telegram.SendPollParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendPoll.name, data, options);
   }
 
   sendChatAction(
-    data: TelegramSendChatActionParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.SendChatActionParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.sendChatAction.name, data, options);
   }
 
   getUserProfilePhotos(
-    data: TelegramGetUserProfilePhotosParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramUserProfilePhotos> {
-    return this.doCall<TelegramUserProfilePhotos>(
+    data: Telegram.GetUserProfilePhotosParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.UserProfilePhotos> {
+    return this.doCall<Telegram.UserProfilePhotos>(
       this.getUserProfilePhotos.name,
       data,
       options,
@@ -218,108 +338,115 @@ export class TelegramService implements OnModuleInit {
   }
 
   getFile(
-    data: TelegramGetFileParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramFile> {
-    return this.doCall<TelegramFile>(this.getFile.name, data, options);
+    data: Telegram.GetFileParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.File> {
+    return this.doCall<Telegram.File>(this.getFile.name, data, options);
   }
 
   kickChatMember(
-    data: TelegramKickChatMemberParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.KickChatMemberParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.kickChatMember.name, data, options);
   }
 
   unbanChatMember(
-    data: TelegramUnbanChatMemberParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.UnbanChatMemberParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.unbanChatMember.name, data, options);
   }
 
   restrictChatMember(
-    data: TelegramRestrictChatMemberParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.RestrictChatMemberParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.restrictChatMember.name, data, options);
   }
 
   promoteChatMember(
-    data: TelegramPromoteChatMemberParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.PromoteChatMemberParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.promoteChatMember.name, data, options);
   }
 
   exportChatInviteLink(
-    data: TelegramExportChatInviteLinkParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<string> {
+    data: Telegram.ExportChatInviteLinkParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<string> {
     return this.doCall<string>(this.exportChatInviteLink.name, data, options);
   }
 
   setChatPhoto(
-    data: TelegramSetChatPhotoParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
-    return this.doCall<true>(this.setChatPhoto.name, data, options);
+    data: Telegram.SetChatPhotoParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
+    return this.doCall<true>(this.setChatPhoto.name, data, options, {
+      headers: {
+        'Content-Type':
+          typeof data.photo === 'object'
+            ? 'multipart/form-data'
+            : 'application/json',
+      },
+    });
   }
 
   deleteChatPhoto(
-    data: TelegramDeleteChatPhotoParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.DeleteChatPhotoParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.deleteChatPhoto.name, data, options);
   }
 
   setChatTitle(
-    data: TelegramSetChatTitleParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.SetChatTitleParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.setChatTitle.name, data, options);
   }
 
   setChatDescription(
-    data: TelegramSetChatDescriptionParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.SetChatDescriptionParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.setChatDescription.name, data, options);
   }
 
   pinChatMessage(
-    data: TelegramPinChatMessageParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.PinChatMessageParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.pinChatMessage.name, data, options);
   }
 
   unpinChatMessage(
-    data: TelegramUnpinChatMessageParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.UnpinChatMessageParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.unpinChatMessage.name, data, options);
   }
 
   leaveChat(
-    data: TelegramLeaveChatParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.LeaveChatParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.leaveChat.name, data, options);
   }
 
   getChat(
-    data: TelegramGetChatParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramChat> {
-    return this.doCall<TelegramChat>(this.getChat.name, data, options);
+    data: Telegram.GetChatParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Chat> {
+    return this.doCall<Telegram.Chat>(this.getChat.name, data, options);
   }
 
   getChatAdministrators(
-    data: TelegramGetChatAdministratorsParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramChatMember[]> {
-    return this.doCall<TelegramChatMember[]>(
+    data: Telegram.GetChatAdministratorsParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.ChatMember[]> {
+    return this.doCall<Telegram.ChatMember[]>(
       this.getChatAdministrators.name,
       data,
       options,
@@ -327,17 +454,17 @@ export class TelegramService implements OnModuleInit {
   }
 
   getChatMembersCount(
-    data: TelegramGetChatMembersCountParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<number> {
+    data: Telegram.GetChatMembersCountParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<number> {
     return this.doCall<number>(this.getChatMembersCount.name, data, options);
   }
 
   getChatMember(
-    data: TelegramGetChatMemberParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramChatMember> {
-    return this.doCall<TelegramChatMember>(
+    data: Telegram.GetChatMemberParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.ChatMember> {
+    return this.doCall<Telegram.ChatMember>(
       this.getChatMember.name,
       data,
       options,
@@ -345,31 +472,31 @@ export class TelegramService implements OnModuleInit {
   }
 
   setChatStickerSet(
-    data: TelegramSetChatStickerSetParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.SetChatStickerSetParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.setChatStickerSet.name, data, options);
   }
 
   deleteChatStickerSet(
-    data: TelegramDeleteStickerSetParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.ChatDeleteStickerSetParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.deleteChatStickerSet.name, data, options);
   }
 
   answerCallbackQuery(
-    data: TelegramAnswerCallbackQueryParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.AnswerCallbackQueryParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.answerCallbackQuery.name, data, options);
   }
 
   editMessageText(
-    data: TelegramEditMessageText,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(
+    data: Telegram.EditMessageTextParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
       this.editMessageText.name,
       data,
       options,
@@ -377,10 +504,10 @@ export class TelegramService implements OnModuleInit {
   }
 
   editMessageCaption(
-    data: TelegramEditMessageCaptionParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(
+    data: Telegram.EditMessageCaptionParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
       this.editMessageCaption.name,
       data,
       options,
@@ -388,21 +515,26 @@ export class TelegramService implements OnModuleInit {
   }
 
   editMessageMedia(
-    data: TelegramEditMessageMediaParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(
+    data: Telegram.EditMessageMediaParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
       this.editMessageMedia.name,
       data,
       options,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
     );
   }
 
   editMessageReplyMarkup(
-    data: TelegramEditMessageReplyMarkupParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramMessage> {
-    return this.doCall<TelegramMessage>(
+    data: Telegram.EditMessageReplyMarkupParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(
       this.editMessageReplyMarkup.name,
       data,
       options,
@@ -410,10 +542,10 @@ export class TelegramService implements OnModuleInit {
   }
 
   stopPoll(
-    data: TelegramStopPollParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<TelegramPoll> {
-    return this.doCall<TelegramPoll>(
+    data: Telegram.StopPollParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Poll> {
+    return this.doCall<Telegram.Poll>(
       this.editMessageReplyMarkup.name,
       data,
       options,
@@ -421,100 +553,142 @@ export class TelegramService implements OnModuleInit {
   }
 
   deleteMessage(
-    data: TelegramDeleteMessageParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<true> {
+    data: Telegram.DeleteMessageParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
     return this.doCall<true>(this.deleteMessage.name, data, options);
   }
 
   sendSticker(
-    data: TelegramSendStickerParams,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.sendSticker.name, data, options);
+    data: Telegram.SendStickerParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendSticker.name, data, options, {
+      headers: {
+        'Content-Type':
+          typeof data.sticker === 'object'
+            ? 'multipart/form-data'
+            : 'application/json',
+      },
+    });
   }
 
   getStickerSet(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.getStickerSet.name, data, options);
+    data: Telegram.GetStickerSetParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.StickerSet> {
+    return this.doCall<Telegram.StickerSet>(
+      this.getStickerSet.name,
+      data,
+      options,
+    );
   }
 
-  uploadStickerSet(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.uploadStickerSet.name, data, options);
+  uploadStickerFile(
+    data: Telegram.UploadStickerFileParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.File> {
+    return this.doCall<Telegram.File>(
+      this.uploadStickerFile.name,
+      data,
+      options,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
   }
 
   createNewStickerSet(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.createNewStickerSet.name, data, options);
+    data: Telegram.CreateNewStickerSetParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
+    return this.doCall<true>(this.createNewStickerSet.name, data, options, {
+      headers: {
+        'Content-Type':
+          typeof data.png_sticker === 'object'
+            ? 'multipart/form-data'
+            : 'application/json',
+      },
+    });
   }
 
   addStickerToSet(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.addStickerToSet.name, data, options);
+    data: Telegram.AddStickerToSetParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
+    return this.doCall<true>(this.addStickerToSet.name, data, options, {
+      headers: {
+        'Content-Type':
+          typeof data.png_sticker === 'object'
+            ? 'multipart/form-data'
+            : 'application/json',
+      },
+    });
   }
 
   setStickerPositionInSet(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.setStickerPositionInSet.name, data, options);
+    data: Telegram.SetStickerPositionInSetParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
+    return this.doCall<true>(this.setStickerPositionInSet.name, data, options);
   }
 
   deleteStickerFromSet(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.deleteStickerFromSet.name, data, options);
+    data: Telegram.DeleteStickerFromSetParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
+    return this.doCall<true>(this.deleteStickerFromSet.name, data, options);
   }
 
   sendInvoice(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.sendInvoice.name, data, options);
+    data: Telegram.SendInvoiceParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendInvoice.name, data, options);
   }
 
   answerShippingQuery(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.answerShippingQuery.name, data, options);
+    data: Telegram.AnswerShippingQueryParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
+    return this.doCall<true>(this.answerShippingQuery.name, data, options);
   }
 
   answerPreCheckoutQuery(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.answerPreCheckoutQuery.name, data, options);
+    data: Telegram.AnswerPreCheckoutQueryParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<true> {
+    return this.doCall<true>(this.answerPreCheckoutQuery.name, data, options);
   }
 
   sendGame(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.sendGame.name, data, options);
+    data: Telegram.SendGameParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message> {
+    return this.doCall<Telegram.Message>(this.sendGame.name, data, options);
   }
 
   setGameScore(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.setGameScore.name, data, options);
+    data: Telegram.SetGameScoreParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.Message | true> {
+    return this.doCall<Telegram.Message | true>(
+      this.setGameScore.name,
+      data,
+      options,
+    );
   }
 
   getGameHighScore(
-    data: any,
-    options?: TelegramAPIOptions,
-  ): TelegramServiceResponse<T> {
-    return this.doCall<T>(this.getGameHighScore.name, data, options);
+    data: Telegram.GetGameHighScoreParams,
+    options?: Telegram.APIOptions,
+  ): Telegram.ServiceResponse<Telegram.GameHighScore[]> {
+    return this.doCall<Telegram.GameHighScore[]>(
+      this.getGameHighScore.name,
+      data,
+      options,
+    );
   }
 }
