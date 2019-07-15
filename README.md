@@ -31,7 +31,7 @@ $ npm install nestjs-telegram
 ```typescript
 // Inside of your module imports
 @Module({
-  imports: [TelegramModule.register({
+  imports: [TelegramModule.forRoot({
     botkey: 'YourBotApiToken'
   })]
 })
@@ -39,7 +39,7 @@ $ npm install nestjs-telegram
 // Or async
 @Module({
   imports: [
-    TelegramModule.registerAsync({
+    TelegramModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
         return { 
           botKey: configService.get('Telegram_API_Key')
