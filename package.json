@@ -1,6 +1,6 @@
 {
   "name": "nestjs-telegram",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A NestJS Module for Telegram Bots",
   "author": {
     "email": "me@jaymcdoniel.dev",
