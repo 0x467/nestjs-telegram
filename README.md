@@ -84,4 +84,4 @@ All documentation for this wrapper comes from the [Telegram Bot API documentatio
 
 ## License
 
-  Nest is [MIT licensed](LICENSE).
+Nestjs-telegram is [MIT licensed](LICENSE).
