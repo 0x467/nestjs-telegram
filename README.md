@@ -8,7 +8,7 @@
   <a href="https://github.com/prettier/prettier"><img src="https://img.shields.io/badge/code_style-prettier-purple.svg?style=flat"/></a>
   <a href="http://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg"/></a>
   <a href="https://travis-ci.org/jmcdo29/nestjs-telegram"><img src="https://travis-ci.org/jmcdo29/nestjs-telegram.svg?branch=master"/></a>
-  <a href="https://coveralls.io/github/jmcdo29/zeldaPlay?branch=master"><img src="https://coveralls.io/repos/github/jmcdo29/nestjs-telegram/badge.svg?branch=master"/></a>
+  <a href="https://coveralls.io/github/jmcdo29/nestjs-telegram?branch=master"><img src="https://coveralls.io/repos/github/jmcdo29/nestjs-telegram/badge.svg?branch=master"/></a>
   <a href="https://github.com/facebook/jest"><img src="https://img.shields.io/badge/tested_with-jest-99424f.svg"/></a>
   <a href="https://dependabot.com"><img src="https://api.dependabot.com/badges/status?host=github&repo=jmcdo29/nestjs-telegram"/></a>
   <a href="https://snyk.io/test/github/jmcdo29/nestjs-telegram?targetFile=package.json"><img src="https://snyk.io/test/github/jmcdo29/nestjs-telegram/badge.svg?targetFile=package.json"/></a>
