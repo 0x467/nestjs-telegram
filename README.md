@@ -32,7 +32,7 @@ $ npm install nestjs-telegram
 // Inside of your module imports
 @Module({
   imports: [TelegramModule.forRoot({
-    botkey: 'YourBotApiToken'
+    botKey: 'YourBotApiToken'
   })]
 })
 

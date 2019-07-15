@@ -91,6 +91,7 @@ typings/
 
 # dotenv environment variables file
 .env
+reference/
 
 # next.js build output
 .next
