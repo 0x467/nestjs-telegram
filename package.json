@@ -1,6 +1,6 @@
 {
   "name": "nestjs-telegram",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A NestJS Module for Telegram Bots",
   "author": {
     "email": "me@jaymcdoniel.dev",
@@ -13,7 +13,12 @@
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "license": "MIT",
-  "keywords": ["nest", "nestjs", "telegram", "bot"],
+  "keywords": [
+    "nest",
+    "nestjs",
+    "telegram",
+    "bot"
+  ],
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\"",
