@@ -57,7 +57,7 @@ export class MyService {
 
   constructor(private readonly telegram: TelegramService) {}
 
-  testBot(): Observable<Telegram.User> {
+  testBot(): Observable<TelegramUser> {
     return this.telegram.getMe();
   }
 }
