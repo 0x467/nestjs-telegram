@@ -1566,7 +1566,7 @@ export interface TelegramEncryptedPassportElement {
     | 'rental_agreement'
     | 'passport_registration'
     | 'temporary_registration'
-    | '[hone_number'
+    | 'phone_number'
     | 'email';
   /**
    * _Optional._ Base64-encoded encrypted  Passport element data provided by the user, available for “personal_details”,
