@@ -238,7 +238,7 @@ export interface TelegramMessage {
   /**
    * _Optional._ A chat photo was change to this value
    */
-  new_chat_phot?: TelegramPhotoSize[];
+  new_chat_photo?: TelegramPhotoSize[];
   /**
    * _Optional._ Service message: the chat photo was deleted
    */
@@ -1236,9 +1236,9 @@ export interface TelegramSticker {
    */
   width: number;
   /**
-   * Sticker heigh
+   * Sticker height
    */
-  heigh: number;
+  height: number;
   /**
    * _Optional._ Sticker thumbnail in the .webp or .jpg format
    */
@@ -2881,7 +2881,7 @@ export interface TelegramSendInvoiceParams extends TelegramChatId {
    * URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
    * People like it better when they see what they are paying for.
    */
-  phot_url?: string;
+  photo_url?: string;
   /**
    * Photo size
    */
@@ -2889,7 +2889,7 @@ export interface TelegramSendInvoiceParams extends TelegramChatId {
   /**
    * Photo width
    */
-  phot_width?: number;
+  photo_width?: number;
   /**
    * Photo height
    */
@@ -3033,7 +3033,7 @@ export interface TelegramGetGameHighScoreParams {
    */
   user_id: number;
   /**
-   * Required if inline_message_id is not specified. unique identifer for the target chat
+   * Required if inline_message_id is not specified. unique identifier for the target chat
    */
   chat_id?: number;
   /**
