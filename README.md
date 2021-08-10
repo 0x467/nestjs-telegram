@@ -40,10 +40,9 @@ $ npm install nestjs-telegram
 @Module({
   imports: [
     TelegramModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => {
-        return { 
-          botKey: configService.get('Telegram_API_Key')
-        };
+      useFactory: async (configService: ConfigService) => ({
+        botKey: configService.get('Telegram_API_Key')
+      }),
       inject: [ConfigService]
     })
   ],
