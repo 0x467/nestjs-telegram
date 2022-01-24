@@ -2569,7 +2569,12 @@ export interface TelegramPinChatMessageParams extends TelegramChatId {
   disable_notifications?: boolean;
 }
 
-export interface TelegramUnpinChatMessageParams extends TelegramChatId {}
+export interface TelegramUnpinChatMessageParams extends TelegramChatId {
+  /**
+   * Identifier of a message to pin
+   */
+   message_id: number;
+}
 
 export interface TelegramLeaveChatParams extends TelegramChatId {}
 
