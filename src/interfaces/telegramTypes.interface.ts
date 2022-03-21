@@ -1756,7 +1756,7 @@ export interface TelegramSendMessageParams extends TelegramChatId {
   /**
    * Disables link previews for links in this message
    */
-  disable_web_preview?: boolean;
+  disable_web_page_preview?: boolean;
   /**
    * Sends the message [silently](https://telegram.org/blog/channels-2-0#silent-messages). Users will receive a notification with no sound.
    */
