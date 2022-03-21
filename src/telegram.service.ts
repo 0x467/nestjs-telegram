@@ -2,7 +2,7 @@ import { HttpService, Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { TelegramModuleOptions } from './interfaces/telegram-module-options.interface';
+import { TelegramModuleOptions } from './interfaces';
 import * as Telegram from './interfaces/telegramTypes.interface';
 import { TELEGRAM_MODULE_OPTIONS } from './telegram.constants';
 
@@ -41,6 +41,13 @@ export class TelegramService implements OnModuleInit {
           throw new Telegram.TelegramException(error.message);
         }),
       );
+  }
+
+  /**
+   * Use this method to receive incoming updates using long polling.
+   */
+  getUpdates(data: Telegram.GetUpdatesParams): Observable<Telegram.Update[]> {
+    return this.doCall<Telegram.Update[]>(this.getUpdates.name, data);
   }
 
   /**
