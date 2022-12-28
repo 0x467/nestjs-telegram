@@ -103,6 +103,7 @@ export interface Update {
 
 /**
  * This object represents a Telegram user or bot.
+ * @see https://core.telegram.org/bots/api#user
  */
 export interface TelegramUser {
   /**
@@ -129,6 +130,26 @@ export interface TelegramUser {
    * _Optional._ [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag) of the user's language
    */
   language_code?: string;
+  /**
+   * _Optional._ true, if this user is a Telegram Premium user
+   */
+  is_premium?: boolean;
+  /**
+   * _Optional._ true, if this user added the bot to the attachment menu
+   */
+  added_to_attachment_menu?: boolean;
+  /**
+   * _Optional._ true, if the bot can be invited to groups. Returned only in getMe.
+   */
+  can_join_groups?: boolean;
+  /**
+   * _Optional._ true, if privacy mode is disabled for the bot. Returned only in getMe.
+   */
+  can_read_all_group_messages?: boolean;
+  /**
+   * _Optional._ true, if the bot supports inline queries. Returned only in getMe.
+   */
+  supports_inline_queries?: boolean;
 }
 
 /**
