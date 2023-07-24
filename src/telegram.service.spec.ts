@@ -571,6 +571,7 @@ describe('TelegramService', () => {
       service
         .unpinChatMessage({
           chat_id: 8754,
+          message_id: 5,
         })
         .subscribe(telegramObserver(done, true, 1));
     });

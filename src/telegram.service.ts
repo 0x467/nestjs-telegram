@@ -1,4 +1,5 @@
-import { HttpService, Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -28,7 +29,7 @@ export class TelegramService implements OnModuleInit {
     return this.http
       .post<Telegram.TelegramResponse<T>>(this.url + url, data, axiosOptions)
       .pipe(
-        map((res) => {
+        map((res: any) => {
           if (!res.data.ok) {
             throw new Telegram.TelegramException(
               res.data.description,
