@@ -34,7 +34,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/axios": "^1.0.1",
+    "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^9.2.1",
     "@nestjs/core": "^9.2.1",
     "reflect-metadata": "^0.1.13",
