@@ -1889,7 +1889,7 @@ export interface TelegramSendMessageParams extends TelegramChatId {
    * [HTML](https://core.telegram.org/bots/api#html-style), if you want  apps to show
    * [bold, italic, fixed-width text or inline URLs](https://core.telegram.org/bots/api#formatting-options) in your bot's message.
    */
-  parse_mode?: 'markdown' | 'html';
+  parse_mode?: 'markdown' | 'html' |  'MarkdownV2' | 'HTML';
   /**
    * Disables link previews for links in this message
    */
